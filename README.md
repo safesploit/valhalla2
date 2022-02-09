@@ -9,8 +9,40 @@ Source code coming -- needs to be reviewed before publication.
 # Features
 
 
-# Preview
+# Security Features
 
+**Each user has a unique salt**
+
+While database compromises via SQL injection would prefer to be avoid completely. Realisitically this attack vector needs to be consider. 
+In response I create another table in the database called 'salts' this table contains two fields 'username' and 'salt'.
+Each user on registration has their own salt randomly generated.
+This ensures the hashed password stored for 'userA' will never be the same as 'userB' even if both users have the same cleartext password.
+Hence, rendering rainbow table attacks not impossible against this platform.
+The salt table is accessed during registration, login and _when a user is logged-in under the settings page_. Otherwise, the attack surface against this table is nonexistent.
+
+
+
+**PBKDF2**
+
+PBKDF2 has been deployed on this site.
+
+
+
+**Invite only**
+
+A validinvite code must be used during registration. 
+Ensuring users not authorised are not able use the website, users not logged-in are redirected to the login page.
+
+
+**Login with email address**
+
+This is security through obsecurity, but has been proven to aid security against bruteforce attacks. 
+Which Haboo saw many victims of due to it using username/password for authentication as opposed to email/password.
+
+
+
+
+# Preview
 **Registration page 
 **<img width="792" alt="001_register" src="https://user-images.githubusercontent.com/10171446/153286193-dd8308bb-604d-4fdd-a8bf-49f8f87d2840.PNG">
 
