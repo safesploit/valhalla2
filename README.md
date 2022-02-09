@@ -1,7 +1,7 @@
 # Valhalla2
 Valhalla 2.0 - Social Media Web-App
 
-
+Source code coming -- needs to be reviewed before publication.
 
 # Valhalla 2.0
 
