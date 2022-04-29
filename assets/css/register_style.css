@@ -1,0 +1,169 @@
+@font-face
+{
+	font-family: 'Bellota-LightItalic';
+	src: url('../fonts/Bellota-LightItalic.otf');
+}
+
+@font-face
+{
+	font-family: 'Bellota-BoldItalic';
+	src: url('../fonts/Bellota-BoldItalic.otf');
+}
+
+html,body
+{
+	height: 100%;
+	min-height: 100%;
+}
+
+form
+{
+	text-align: center;
+} 
+
+body
+{
+	margin: 0;
+	padding: 0;
+}
+
+a
+{
+	text-decoration: none;
+	color: #3498DB;
+}
+
+.wrapper
+{
+	background-image: url("../images/backgrounds/interconnected.png");
+	background-size: 100%;
+	width: 100%;
+	height: 100%;
+	min-width: 950px;
+}
+
+.login_box
+{
+	font-family: 'Bellota-BoldItalic', sans-serif;
+	position: relative;
+	margin-right: auto;
+	margin-left: auto;
+	top: 7%;
+	width: 35%;
+	background-color: #FFFFFF;
+	border: 1px solid #EDEDED;
+	border-radius: 12px;
+	padding: 5px;
+	opacity: 0.96;
+}
+
+.login_header
+{
+	font-family: 'Bellota-LightItalic', sans-serif;
+	width: 100%;
+	height: 90px;
+	background-color: #3498DB;
+	color: #FFF;
+	text-align: center;
+	border-top-left-radius: 12px;
+	border-top-right-radius: 12px;
+	margin: 0px 0px 15px 0px;
+}
+
+.login_header h1
+{
+	font-family: 'Bellota-BoldItalic', sans-serif;
+	margin-top: 0;
+	margin-bottom: 0;
+	#color: #2C6C96;
+	text-shadow: #000 3px 3px 2px;
+}
+
+input[type="submit"]
+{
+	background-color: #3498DB;
+	border: 1px solid #3498DB;
+	border-radius: 5px;
+	margin: 5px 0 5px 0;
+	padding: 5px 10px 5px 10px;
+	color: #000;
+	#font-family: 'Bellota-BoldItalic', sans-serif;
+	font-size: 100%;
+}
+
+input[type="submit"]:hover
+{
+	font-weight: 900;
+}
+
+input[type="text"], input[type="email"], input[type="password"]
+{
+	border: 1.5px solid #E5E5E5;
+	margin-top: 5px;
+	width: 70%;
+	height: 30px;
+	margin-bottom: 10px;
+	padding-left: 5px;
+}
+
+input[type="text"]:hover, input[type="email"]:hover, input[type="password"]:hover
+{
+	border-color: #3498DB;
+}
+
+#first
+{
+	#display: none;
+}
+
+#second
+{
+	display: none;
+}
+
+
+
+/* iphone X , XS, 11 Pro, 12 Mini */
+@media only screen and (min-device-width: 375px) and (max-device-height: 812px) and (-webkit-device-pixel-ratio: 3)
+{
+	.login_box 
+	{
+	    font-family: 'Bellota-BoldItalic', sans-serif;
+	    position: relative;
+	    margin-right: auto;
+	    margin-left: auto;
+	    top: 6%;
+	    width: 90%;
+	    background-color: #FFFFFF;
+	    border: 1px solid #EDEDED;
+	    border-radius: 12px;
+	    padding: 5px;
+	    opacity: 0.96;
+	    font-size: 200%;
+	}
+
+	input[type="submit"]
+	{
+		background-color: #3498DB;
+		border: 1px solid #3498DB;
+		border-radius: 5px;
+		margin: 5px 0 5px 0;
+		padding: 5px 10px 5px 10px;
+		color: #000;
+		#font-family: 'Bellota-BoldItalic', sans-serif;
+		font-size: 150%;
+	}
+
+	input[type="text"], input[type="email"], input[type="password"]
+	{
+		border: 1.5px solid #E5E5E5;
+		margin-top: 10px;
+		width: 85%;
+		height: 65px;
+		margin-bottom: 20px;
+		padding-left: 5px;
+		font-size: 150%;
+		border-radius: 5px;
+	}
+	
+}

@@ -1,0 +1,126 @@
+/* iphone X , XS, 11 Pro, 12 Mini */
+@media only screen and (min-device-width: 375px) and (max-device-height: 812px) and (-webkit-device-pixel-ratio: 3)
+{
+
+	body
+	{
+		line-height: 37px;
+	}
+
+	nav a
+	{
+		position: relative;
+		color: #FFF;
+		text-decoration: none;
+		font-size: 22px;
+		padding: 4px;
+	}
+
+	nav button
+	{
+		position: relative;
+		color: #FFF;
+		background-color: #186ea8;
+		text-decoration: none;
+		font-size: 22px;
+		padding: 3px;
+		border: 0px;
+	}
+
+	nav .username:hover .dropdown-content
+	{
+		display: block;
+		text-decoration: none;
+		font-size: 250%;
+		padding: 20px;
+		margin: 0 0 20px 0;
+		border-radius: 3px;
+		opacity: 95%;
+		z-index: 20;
+		position: relative;
+	}
+
+	.yt_video iframe
+	{
+		margin: auto; 
+		display:block
+	}
+
+	.top_bar
+	{
+		font-size: 160%;
+	}
+
+	.wrapper
+	{
+		font-size: 16px;
+		width: 100%;
+	}
+
+	.user_details
+	{
+		display: none;
+
+	}
+
+	.main_column
+	{
+		width: 107%;
+		float: none;
+		#text-align: center;
+	}
+
+	.post_form input[type="submit"]
+	{
+		font-size: 150%;
+	}
+
+	#conversations
+	{
+		display: block;
+		width: 400px;
+	}
+
+	.status_post
+	{
+		font-size: 35px;
+		margin 20px
+	}
+
+	.posted_by
+	{
+		margin: 10px;
+		#text-align: left;
+	}
+
+	.post_body
+	{
+		margin: 35px;
+	}
+
+	.delete_button
+	{
+		height: 100%;
+	    width: 4%;
+	    padding: 0;
+	    float: right;
+	    border-radius: 25px;
+	    right: -15px;
+	    position: relative;
+    }
+
+    .message
+    {
+    	font-size: 30px;
+    }
+
+    #message_submit
+    {
+    	font-size: 200%;
+    }
+
+    *
+    {
+    	#font-size: 125%;
+    }
+}

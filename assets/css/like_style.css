@@ -1,0 +1,16 @@
+*
+{
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+body
+{
+	background-color: #FFF;
+}
+
+form
+{
+	position: absolute;
+	top: 0;
+	margin-top: 5px;
+}

@@ -1,0 +1,962 @@
+@font-face
+{
+	font-family: 'Bellota-LightItalic';
+	src: url('../fonts/Bellota-LightItalic.otf');
+}
+
+@font-face
+{
+	font-family: 'Bellota-BoldItalic';
+	src: url('../fonts/Bellota-BoldItalic.otf');
+}
+
+body
+{
+	line-height: 17px;
+	background-color: #E6EAE8;
+}
+
+a
+{
+	color: #186ea8;
+	text-decoration: none;
+	font-weight: bold;
+}
+
+.top_bar
+{
+	width: 100%;
+	min-width: 1050px;
+	height: 50px;
+	background-color: #186ea8;
+	border-bottom: 0.25em solid #1478a2;
+	margin: 0 0 10px 0;
+	display: inline-flex;
+	z-index: 10;
+}
+
+.logo a
+{
+	font-family: 'Bellota-BoldItalic' ,sans-serif;
+	margin-left: 10px;
+	font-size: 150%;
+	position: relative;
+	top: 4px;
+	text-shadow: #73B6E2 0.5px 0.5px 0px;
+	color: #bbd3de;
+	text-decoration: none
+}
+
+.logo a:hover
+{
+	text-decoration: none;
+}
+
+.logo img
+{
+	margin-left: 10px;
+	position: relative;
+	top: -5px;
+	width: 50px;
+	height: 50px;
+}
+
+nav
+{
+	float: right;
+	right: 1px;
+	position: absolute;
+	margin: 10px;
+}
+
+nav a
+{
+	position: relative;
+	color: #FFF;
+	text-decoration: none;
+	font-size: 22px;
+	padding: 4px;
+}
+
+nav button
+{
+	position: relative;
+	color: #FFF;
+	background-color: #186ea8;
+	text-decoration: none;
+	font-size: 22px;
+	padding: 3px;
+	border: 0px;
+}
+
+nav a:hover
+{
+	border-bottom: 5px solid #0097e6;
+	border-radius: 4px;
+	color: #FFF;
+}
+
+nav .dropdown-content 
+{
+	display: none;
+	text-decoration: none;
+	background-color: #186ea8;
+	padding: 8px;
+	margin: 0;
+}
+
+nav .username:hover .dropdown-content
+{
+	display: block;
+	text-decoration: none;
+	font-size: 250%;
+	padding: 20px;
+	margin: 0 0 20px 0;
+	border-radius: 3px;
+	opacity: 95%;
+	position: relative;
+	z-index: 30;
+}
+
+nav .dropdown-content a:hover
+{
+	#background-color: #003366;
+}
+
+nav .username img
+{
+	border-radius: 50%;
+	position: relative;
+	width: 20px;
+	height: 20px;
+}
+
+
+.username
+{
+	text: bold;
+	text-align: right;
+}
+
+.wrapper
+{
+	margin: 0 auto;
+	top: 10px;
+	position: relative;
+	padding: 0 10px;
+	width: 75%;
+	min-width: 950px;
+}
+
+.column
+{
+	background-color: #FFF;
+	padding: 10px;
+	border: 1.5px solid #D3D3D3;
+	border-radius: 4px;
+	box-shadow: 2px 2px 1px #D3D3D3;
+	z-index: -1;
+}
+
+.user_details
+{
+	width: 250px;
+	float: left;
+	margin-bottom: 20px;
+}
+
+.user_details_left_right
+{
+	width: 125px;
+	display: inline-block;
+	position: absolute;	
+	padding-left: 15px;
+}
+
+.user_details_left_right a
+{
+	text-decoration: none;
+}
+
+.user_details_left_right a:hover
+{
+	text-decoration: none;
+}
+
+.user_details img
+{
+	height: 125px;
+	#border-radius: 5px;
+	border-radius: 50%; #circular border-radius
+	margin-right: 5px;
+}
+
+.main_column
+{
+	float: right;
+	width: 70%;
+	z-index: -1;
+	min-height: 160px;
+}
+
+.main_column h4
+{
+	font-weight: bold;
+	text-align: center;
+}
+
+.post_form
+{
+	width: 100%;
+}
+
+.post_form textarea
+{
+	#width: 84%;
+	width: 100%;
+	height: 60px;
+	border-radius: 5px;
+	margin-right: 5px;
+	border: 1px solid #D3D3D3;
+	font-size: 14px;
+	padding: 5px;
+}
+
+.yt_video iframe
+{
+	margin: auto; 
+	display:block
+}
+
+textarea:focus
+{
+	outline: 0;
+}
+
+.post_form input[type="submit"]
+{
+	width: 10%;
+	height: 60px;
+	border: none;
+	border-radius: 10px;
+	background-color: #186EA8;
+	font-family: 'Bellota-BoldItalic', sans-serif;
+	color: #FFF;
+	text-shadow: #73B6E2 0.5px 0.5px 0px;
+	font-size: 90%;
+	position: absolute;
+	outline: 0;
+	margin: 0;
+}
+
+.post_form input[type="submit"]:active
+{
+	padding: 5px 4px 4px 5px;
+	background-color: #1e84c8;
+}
+
+.status_post
+{
+	width: 96%;
+	font-size: 15px;
+	padding: 0px 5px;
+	min-height: 75px;
+	cursor: pointer;
+}
+
+.post_profile_pic
+{
+	float: left;
+	margin-right: 7px;
+}
+
+.post_profile_pic img
+{
+	border-radius: 50%;
+}
+
+#comment_iframe
+{
+    max-height: 400px;
+    width: 100%;
+}
+
+.comment_section
+{
+	padding: 0 5px 5px 5px;
+}
+
+.comment_section img
+{
+	margin: 0 3px 3px 3px;
+	border-radius: 50%;
+}
+
+#comment_form textarea
+{
+	border-color: #D3D3D3;
+	width: 90%;
+	height: 35px;
+	border-radius: 5px;
+	color: #616060;
+	font-size: 14px;
+	margin: 3px 3px 3px 5px;
+}
+
+#comment_form input[type="submit"]
+{
+	width: 8%;
+	height: 30px;
+	border: none;
+	border-radius: 10px;
+	background-color: #186EA8;
+    color: #FFF;
+    font-family: 'Bellota-BoldItalic', sans-serif;    
+	text-shadow: #73B6E2 0.5px 0.5px 0px;
+	font-size: 90%;
+	position: absolute;
+	outline: 0;
+	margin-top: 8px;
+}
+
+/* Used to style comments number */
+.newsfeedPostOptions
+{
+	padding: 0px;
+	text-decoration: none;
+	color: #718093;
+	border: none;
+	font-weight: lighter;
+	margin-top: 10px;
+	#float: right;
+}
+
+/* Style like button */
+.newsfeedPostOptions iframe
+{
+	border: 0px;
+	height: 20px;
+	width: 120px;
+}
+
+.comment_like
+{
+	border: none;
+	border-radius: 10px;
+    color: #186EA8;
+    #font-family: 'Bellota-BoldItalic', sans-serif;    
+	text-shadow: #73B6E2 0.5px 0.5px 0px;
+	font-size: 14px;
+	padding: 0;
+	background-color: transparent;
+	height: auto;
+	width: auto;
+	margin: 0;
+}
+
+.comment_like:hover
+{
+	text-decoration: underline;
+}
+
+.like_value
+{
+	display: inline;
+	font-size: 14px;
+}
+
+/*******************************************
+ *  Profile page 
+ *******************************************/
+
+.profile_left
+{
+	top: -20px;
+	width: 17%;
+	max-width: 240px;
+	min-width: 130px;
+	min-height:100vh;
+	height: 100%;
+	float: left;
+	position: relative;
+	background-color: #37B0E9;
+	border-right: 10px solid #83D6FE;
+	color: #CBEAF8;
+	margin-right: 20px;
+}
+
+.profile_left img
+{
+	min-width: 80px;
+	width: 55%;
+	margin: 20px;
+	border: 0.1px solid white;
+	border-radius: 50%;
+}
+
+.profile_info
+{
+	display: list-item;
+	#background-color: #2980B9;
+	width: 100%;
+	padding: 10px 0 10px 0;
+	
+}
+
+.profile_info p
+{
+	margin: 0 0 0 20px;
+	word-wrap: break-word;
+	font-size: 18px;
+	padding: 3px;
+	font-family: 'Bellota-BoldItalic', sans-serif;  
+}
+
+.danger
+{
+	background-color: #E74C3C;
+}
+
+.warning
+{
+	background-color: #F0AD4E;
+}
+
+.default
+{
+	background-color: #BDC3C7;
+}
+
+.success
+{
+	background-color: #2ECC71;
+}
+
+.info
+{
+	background-color: #3498DB;
+}
+
+.deep_blue
+{
+	background-color: #0043F0;
+}
+
+
+.profile_left input[type="submit"]
+{
+	width: 90%;
+	height: 30px;
+	border-radius: 5px;
+	margin: 7px 0 0 7px;
+	border: none;
+	color: #FFF;
+	word-wrap: break-word;
+}
+
+/* Button on index.php */
+.post_something_button
+{
+	width: 20%;
+	height: 27px;
+	border-radius: 5px;
+	margin: 5px;
+	border: none;
+	color: #FFF;
+	background-color: #231ab9;	
+}
+
+/* Buttons on requests.php */
+#accept_button
+{
+	width: 20%;
+	height: 27px;
+	border-radius: 5px;
+	margin: 5px;
+	border: none;
+	color: #FFF;
+	background-color: #2ECC71;
+}
+
+#ignore_button
+{
+	width: 20%;
+	height: 27px;
+	border-radius: 5px;
+	margin: 5px;
+	border: none;
+	color: #FFF;
+	background-color: #E74C3C;
+}
+
+.delete_button
+{
+	height: 22px;
+	width: 22px;
+	padding: 0;
+	float: right;
+	border-radius: 25px;
+	right: -15px;
+	position: relative;
+}
+
+.profile_main_column
+{
+	min-width: 675px;
+	float: left;
+	width: 70%;
+	z-index: -1;
+}
+
+.profile_info_bottom 
+{
+	margin: 10 0 0 14px;
+}
+
+/*******************************************
+ * Message System 
+ *******************************************/
+#message_textarea
+{
+	width: 80%;
+	margin-right: 8px;
+	border-radius: 5px;
+	border: 1px solid #D3D3D3;
+	font-size: 14px;
+}
+
+#message_submit
+{
+	height: 41px;
+	width: 120px;
+	border: none;
+	border-radius: 10px;
+	background-color: #186EA8;
+    color: #FFF;
+    font-family: 'Bellota-BoldItalic', sans-serif;    
+	text-shadow: #73B6E2 0.5px 0.5px 0px;
+	font-size: 90%;
+	position: absolute;
+	outline: 0;
+}
+
+/* Message textarea DateTime styling
+#body_date
+{
+	#float: right;
+	font-size: 80%;
+	#font-family: 'Bellota-BoldItalic', sans-serif;  
+	#border: 1px solid #D3D3D3;
+	#border-radius: 5px;
+	margin-right: 8px;
+	padding: 5px;
+	position: relative;
+}
+
+#message_date_green, #message_date_blue
+{
+	font-size: 75%;
+}
+
+*/
+
+
+.message
+{
+	border: 1px solid #000;
+	border-radius: 5px;
+	padding: 4px 10px;
+	display: inline-block;
+	color: #fff;
+}
+
+.message#blue
+{
+	background-color: #3498DB;
+	border-color: #2980B9;
+	float: right;
+	margin-bottom: 5px;
+	max-width: 60%;
+}
+
+.message#green
+{
+	background-color: #2ECC71;
+	border-color: #27AE60;
+	float: left;
+	margin-bottom: 5px;
+	max-width: 60%;
+}
+
+.loaded_messages 
+{
+	height: 65%;
+	min-height: 300px;
+	max-height: 400px;
+	overflow: scroll;
+	margin-bottom: 10px;
+}
+
+/* Message System | Conversations list */
+.loaded_conversations
+{
+	max-height: 320px;
+	overflow: scroll;
+}
+
+.user_details h4
+{
+	text-align: center;
+	font-weight: bold;
+}
+
+.user_found_messages
+{
+	border-bottom: 1px solid #D3D3D3;
+	padding: 8px 8px 10px 8px;
+}
+
+.user_found_messages:hover
+{
+	background-color: #f2f2f2;
+}
+
+.user_found_messages img
+{
+	height: 35px;
+	float: left;
+}
+
+#grey
+{
+	color: #8C8C8C;
+}
+
+.timestamp_smaller#grey
+{
+	font-style: italic;
+}
+
+
+/* Message System | Live Search */
+
+.resultDisplay
+{
+	padding: 5px 5px 0 4px;
+	height: 75px;
+	border-bottom: 1px solid #D3D3D3;
+}
+
+.resultDisplay a
+{
+	float: none;
+}
+
+.resultDisplay:hover
+{
+	background-color: #EBEBEB;
+	text-decoration: none;
+}
+
+.liveSearchProfilePic img
+{
+	height: 50px;
+	border-radius: 50%;
+	margin: 1px 12px 0 2px;
+	float: left;
+}
+
+.liveSearchText
+{
+	background-color: transparent;
+	color: #1E96CA;
+}
+
+.liveSearchText p
+{
+	margin-left: 10px;
+	font-size: 14px;
+
+}
+
+#liveSearchText_username 
+{
+	font-size: 85%;
+
+}
+
+/* Message System | Profile Page Message */
+.tab-content
+{
+	margin-top: 15px;
+}
+
+
+/******************************************
+ *  Dropdown Message Box (navbar) *
+ *****************************************/
+
+.dropdown_data_window
+{
+	background-color: #FFF;
+	border: 1px solid #DADADA;
+	border-radius: 0 0 8px 8px;
+	border-top: none;
+	width: 300px;
+	position: absolute;
+	right: 10px;
+	top: 50px;
+	overflow: scroll;
+	z-index: 10;
+}
+
+.dropdown_data_window:hover
+{
+	text-decoration: none;
+}
+
+
+.dropdown_data_window 
+{
+    background-color: #fff;
+    border: 1px solid #DADADA;
+    border-radius: 0 0 8px 8px;
+    border-top: none;
+    width: 300px;
+    position: absolute;
+    right: 10px;
+    top: 50px;
+    overflow: scroll;
+}
+
+.notification_badge 
+{
+	padding: 3px 7px;
+	font-size: 12px;
+	font-weight: 700;
+	line-height: 1;
+	color: #fff;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: baseline;
+	background-color: #F00;
+	border-radius: 10px;
+	position: absolute;
+	left: 8px;
+	top: -5px;
+}
+
+
+/******************************************
+ *  Notifications
+ *****************************************/
+
+.resultDisplayNotification
+{
+	height: auto;
+    color: #1485BD;
+    padding-bottom: 7px;
+}
+
+.resultDisplayNotification img 
+{
+    height: 40px;
+    border-radius: 50%;
+    margin: 1px 12px 0px 2px;
+    float: left;
+}
+
+.timestamp_smaller 
+{
+	font-size: 85%;
+	margin: 0;
+}
+
+/******************************************
+ *  Live Search
+ *****************************************/
+
+ .search 
+{
+	margin: 8px 0 0 15%;
+}
+
+.search #search_text_input 
+{
+	border: thin solid #E5E5E5;
+  	float: left;
+  	height: 34px;
+  	outline: 0;
+  	width: 150px;
+  	border-radius: 3px 0 0 3px;
+}
+
+.button_holder 
+{
+	background-color: #F1F1F1;
+  	border: thin solid #e5e5e5;
+  	cursor: pointer;
+  	float: left;
+  	height: 34px;
+  	text-align: center;
+  	width: 30px;
+  	border-radius: 0 3px 3px 0;
+}
+
+.button_holder img 
+{
+	margin-top: 1px;
+    width: 20px;
+}
+
+.search_results 
+{
+	background-color: #fff;
+    border: 1px solid #DADADA;
+    border-bottom: none;
+    border-top: none;
+    margin-top: 33px;
+    z-index: 20;
+    position: relative;
+}
+
+.search_results_footer
+{
+	padding: 7px 4px 0px 4px;
+    height: 30px;
+    border: 1px solid #DADADA;
+    border-top: none;
+    background-color: #20AAE5;
+    text-align: center;
+    z-index: 20;
+    position: relative;
+}
+
+.search_results_footer a 
+{
+	color: #fff;
+}
+
+/******************************************
+ *  Search page styling
+ *****************************************/
+.search_result 
+{
+	padding: 10px;
+    height: 100px;
+}
+
+.searchPageFriendButtons 
+{
+	float: right;
+}
+
+.searchPageFriendButtons input[type="submit"] 
+{
+	border: none;
+    padding: 7px 12px;
+    border-radius: 5px;
+    color: #fff;
+    float: right;
+}
+
+.result_profile_pic img
+{
+	float: left;
+    margin-right: 10px;
+    border-radius: 50%;
+}
+
+#search_hr
+{
+	margin-bottom: 0px;
+}
+
+
+/******************************************
+ *  Settings page styling
+ *****************************************/
+.small_profile_pic
+{
+	height: 55px;
+    margin: 1px 12px 0 2px;
+    float: left;
+    border-radius: 50%;
+}
+
+.settings_input 
+{
+	border: 1px solid #ccc;
+    height: 20px;
+    padding: 4px 6px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    font-size: 14px;
+    line-height: 20px;
+}
+
+.settings_submit 
+{
+	border: none;
+    padding: 7px 12px;
+    border-radius: 5px;
+    color: #fff;
+}
+
+
+/******************************************
+ *  
+ *****************************************/
+.message .deleteButton 
+{
+	color: #F00;
+	background-color: #000;
+	border-radius: 50%;
+	margin: 0 5px 5px 0;
+	cursor: pointer;
+}
+
+.postedImage img 
+{
+	max-height: 300px;
+    max-width: 100%;
+    display: block;
+    margin: 5px auto;
+    border-radius: 5px;
+}
+
+img.profilePicSmall 
+{
+	height: 40px;
+	width: 40px;
+	border-radius: 25px;
+	margin: 5px; 
+}
+
+.upload_file_btn 
+{
+	position: relative;
+	overflow: hidden;
+}
+
+.upload_file_btn input[type=file] 
+{
+	position: absolute;
+	top: 0;
+	right: 0;
+	min-width: 100%;
+	min-height: 100%;
+	font-size: 100px;
+	text-align: right;
+	filter: alpha(opacity=0);
+	opacity: 0;
+	outline: none;
+	background: white;
+	cursor: inherit;
+	display: block;
+}
+
+#showMore_preview summary
+{
+	text-decoration: underline;
+}
