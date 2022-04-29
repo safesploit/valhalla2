@@ -1,13 +1,15 @@
 # Valhalla2
 Valhalla 2.0 - Social Media Web-App
 
-Source code coming -- needs to be reviewed before publication.
-
-# Valhalla 2.0
-
-
 # Features
 
+# Table of Contents
+
+# Configuration and Setup
+
+## Importing SQL Database Structure
+
+valhalla2-sql-table-No-Data.sql
 
 # Security Features
 
