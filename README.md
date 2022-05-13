@@ -2,6 +2,18 @@
 Valhalla 2.0 - Social Media Web-App
 
 # Features
+  - Email and password login
+  - User settings page
+  - Each user has their own profile page
+  - Mutual friends list when checking another profile page
+  - Likes and comments on posts
+  - Submit posts, comments and likes through AJAX
+  - Submit images as posts
+  - Messaging system
+  - Dropdown menus with badge icon for messages, notification and friend requests
+  - Live search
+  - YouTube links are converted from 'watch' to 'embed'
+  - Trend words
 
 # Table of Contents
 
