@@ -1,5 +1,5 @@
 # Valhalla2
-Valhalla 2.0 - Social Media Web-App
+Valhalla 2.0 is a full scale social media website! Not only does it contain all the main functionality you get with the likes of Facebook or Twitter, but it also respects privacy!
 
 # Features
   - Email and password login
