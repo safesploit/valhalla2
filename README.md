@@ -17,6 +17,11 @@ Valhalla 2.0 is a full scale social media website! Not only does it contain all 
 
 # Table of Contents
 
+- [Configuration and Setup](#configuration-and-setup)
+  - [Importing SQL Database Structure](#importing-sql-database-structure)
+- [Security Features](#security-features)
+- [Preview](#preview)
+
 # Configuration and Setup
 
 ## Importing SQL Database Structure
