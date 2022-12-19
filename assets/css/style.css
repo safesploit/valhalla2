@@ -489,7 +489,7 @@ textarea:focus
 	background-color: #E74C3C;
 }
 
-.delete_button
+.deleteButton
 {
 	height: 22px;
 	width: 22px;
@@ -498,6 +498,16 @@ textarea:focus
 	border-radius: 25px;
 	right: -15px;
 	position: relative;
+}
+
+.sharePostButton
+{
+	height: 22px;
+	width: 22px;
+	padding: 0;
+	float: right;
+	border-radius: 25px;
+	/* needs styling */
 }
 
 .profile_main_column
@@ -959,4 +969,10 @@ img.profilePicSmall
 #showMore_preview summary
 {
 	text-decoration: underline;
+}
+
+.trendingWordsDiv
+{
+	padding: 1px;
+	/* margin-bottom: 1px; */
 }
