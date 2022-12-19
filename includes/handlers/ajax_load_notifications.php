@@ -1,10 +1,12 @@
 <?php
-	include("../../config/config.php");
-	include("../classes/User.php");
-	include("../classes/Notification.php");
+// require("../../config/config.php");
+include("../../config/config.php");
 
-	$limit = 7; //Number of notifications to load
+include("../classes/User.php");
+include("../classes/Notification.php");
 
-	$notification = new Notification($conn, $_REQUEST['userLoggedIn']);
-	echo $notification->getNotifications($_REQUEST, $limit);
+$limit = 7; //Number of notifications to load
+
+$notification = new Notification($conn, $_REQUEST['userLoggedIn']);
+echo $notification->getNotifications($_REQUEST, $limit);
 ?>

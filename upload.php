@@ -1,5 +1,7 @@
 <?php 
-include("includes/header.php");
+require("includes/header.php");
+// include("includes/header.php");
+
 
 //Set Symbolic File Upload Directory
 $symDir = 'assets/images/profile_pics/upload/';	

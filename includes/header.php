@@ -1,48 +1,68 @@
 <?php 
-	require_once('config/config.php'); 
-	include("includes/classes/User.php");
-	include("includes/classes/Post.php");
-	include("includes/classes/Message.php");
-	include("includes/classes/Notification.php");
-	include("includes/classes/Salt.php");
-?>
+require_once('config/config.php'); 
+require("includes/classes/User.php");
+require("includes/classes/Post.php");
+require("includes/classes/Message.php");
+require("includes/classes/Notification.php");
+require("includes/classes/Salt.php");
+require("includes/classes/UserService.php");
 
-<?php
-	if(isset($_SESSION['username']))
-	{
-		$userLoggedIn = $_SESSION['username'];
-		$user_details_query = mysqli_query($conn, "SELECT * FROM users WHERE username='$userLoggedIn'");
-		$user = mysqli_fetch_array($user_details_query);
-	}
-	else
-	{
-		header("Location: register.php");
-	}
-?>
-		<?php
-			//Unread messages
-			$messages = new Message($conn, $userLoggedIn);
-			$num_messages = $messages->getUnreadNumber();
+// if(isset($_SESSION['username']))
+// {
+// 	$userLoggedIn = $_SESSION['username'];
+// 	$user_details_query = mysqli_query($conn, "SELECT * FROM users WHERE username='$userLoggedIn'");
+// 	$user = mysqli_fetch_array($user_details_query);
+// }
+// else
+// {
+// 	header("Location: register.php");
+// }
 
-			//Unread notifications 
-			$notifications = new Notification($conn, $userLoggedIn);
-			$num_notifications = $notifications->getUnreadNumber();	
+if(!isset($_SESSION['username']))
+	header("Location: register.php");
 
-			//Friend requests notifications
-			$user_obj = new User($conn, $userLoggedIn);
-			$num_requests = $user_obj->getNumberOfFriendRequests();	
-		?>
-<?php 
-$num_sum = $num_messages + $num_notifications + $num_requests; 
-if($num_sum > 99)
-	$num_sum = "99+";
+$userLoggedIn = $_SESSION['username'];
+
+$message_obj= new Message($conn, $userLoggedIn);
+$notification_obj = new Notification($conn, $userLoggedIn);
+$user_obj = new User($conn, $userLoggedIn);
+
+$numMessages = $message_obj->getUnreadNumber();
+$numNotifications = $notification_obj->getUnreadNumber();
+$numRequests = $user_obj->getNumberOfFriendRequests();
+
+$user = $user_obj->fetchUserDetails(); //user_details column not loading image?!!
+
+$firstname = $user['first_name'];
+$profilePic = $user['profile_pic'];
+
+include("includes/handlers/ajax_update_title.php");
+
 ?>
+<!-- Preparation for AJAX update title -- called above -->
+<script>
+// $(function()
+// {
+// 	$.ajax(
+// 	{
+// 		url: "includes/handlers/ajax_update_title.php",
+// 		type: "POST",
+// 		data: title,
+// 		cache:false,
+
+// 		success: function(response) 
+// 		{
+			
+// 		}
+// 	});
+// });
+</script>
 
 <!DOCTYPE html>
 <html>
 <head>
 	<meta charset="utf-8">
-	<title><?php if($num_sum > 0) echo '(' . $num_sum . ')'; ?> Valhalla 2.0</title>
+	<title><?php echo $title ?></title>
 	<link rel="shortcut icon" type="image/x-icon" href="assets/images/favicon/logo_transparent.png">
 
 	<!-- JavaScript -->
@@ -59,6 +79,8 @@ if($num_sum > 99)
 	<link rel="stylesheet" type="text/css" href="assets/css/style.css">
 	<link rel="stylesheet" type="text/css" href="assets/css/style_mobile.css">
 	<link rel="stylesheet" href="assets/css/jQuery.jCrop/0.9.12/jquery.Jcrop.css" type="text/css" />
+
+<!-- Possibly use SRI CDNs instead -->
 	
 </head>
 <body>
@@ -67,7 +89,6 @@ if($num_sum > 99)
 	<div class="logo">
 		<a href="index.php"><img src="assets/images/favicon/logo_transparent.png"> Valhalla 2.0</a>
 	</div>
-
 	<div class="search">
 		<form action="search.php" method="GET" name="search_form">
 			<input type="text" onkeyup="getLiveSearchUsers(this.value, '<?php echo $userLoggedIn; ?>')" name="q" placeholder="Search..." autocomplete="off" id="search_text_input">
@@ -79,48 +100,40 @@ if($num_sum > 99)
 
 		<div class="search_results">
 		</div>
-
 		<div class="search_results_footer_empty">
 		</div>
-
 	</div>
 
-	
-
 	<nav>
-		
-
-
-
 		<a href="/"><i class="fa fa-home" aria-hidden="true"></i></a>
 		<a href="javascript:void(0);" onclick="getDropdownData('<?php echo $userLoggedIn; ?>', 'message')">
 			<i class="fa fa-envelope-open-o" aria-hidden="true"></i><span class="dropdown_data_window_message"><?php 
-				if($num_messages > 0 && $num_messages <= 99)
-					echo '<span class="notification_badge" id="unread_message">' . $num_messages . '</span>';
-				else if($num_messages > 99)
+				if($numMessages > 0 && $numMessages <= 99)
+					echo '<span class="notification_badge" id="unread_message">' . $numMessages . '</span>';
+				else if($numMessages > 99)
 					echo '<span class="notification_badge" id="unread_message">' . "99+" . '</span>';
 		?></span><span class="dropdown_data_window_message_empty"></span></a>
 		<a href="javascript:void(0);" onclick="getDropdownData('<?php echo $userLoggedIn; ?>', 'notification')">
 			<i class="fa fa-bell-o" aria-hidden="true"></i><span class="dropdown_data_window_notification"><?php
-				if($num_notifications > 0 && $num_notifications <= 99)
-					echo '<span class="notification_badge" id="unread_notification">' . $num_notifications . '</span>';
-				else if($num_notifications > 99)
+				if($numNotifications > 0 && $numNotifications <= 99)
+					echo '<span class="notification_badge" id="unread_notification">' . $numNotifications . '</span>';
+				else if($numNotifications > 99)
 					echo '<span class="notification_badge" id="unread_notification">' . "99+" . '</span>';
 		?></span><span class="dropdown_data_window_notification_empty"></span></a>
-		<a href="requests.php">
+		<a href="friend_requests.php">
 			<i class="fa fa-users" aria-hidden="true"></i><?php
-				if($num_requests > 0 && $num_requests <= 99)
-					echo '<span class="notification_badge" id="unread_requests">' . $num_requests . '</span>';
-				else if($num_requests > 99)
+				if($numRequests > 0 && $numRequests <= 99)
+					echo '<span class="notification_badge" id="unread_requests">' . $numRequests . '</span>';
+				else if($numRequests > 99)
 					echo '<span class="notification_badge" id="unread_requests">' . "99+" . '</span>';
 		?></a>
 		
 		<!--Add a dropdown menu for username with account_settings/logout/etc... -->
 		<span class="username">
 			<button>
-				<img src="<?php if(isset($user)) echo $user['profile_pic']; ?>">
+				<img src="<?php if(isset($user)) echo $profilePic; ?>">
 				<!-- <i class="fa fa-user-circle-o" aria-hidden="true"></i> -->
-				<?php if(isset($user)) print($user['first_name']); ?>
+				<?php if(isset($user)) echo $firstname; ?>
 				<i class="fa fa-caret-down" aria-hidden="true"></i>
 			</button>
 			<div class="dropdown-content">
@@ -137,6 +150,7 @@ if($num_sum > 99)
 
 
 <!-- JS Responsible for infinite scrolling -->
+<!-- Infinfite scrolling for notification dropdown menu -->
 <script>
 	var userLoggedIn = '<?php echo $userLoggedIn ?>';
 

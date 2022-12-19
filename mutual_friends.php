@@ -1,14 +1,12 @@
 <?php
-	include("includes/header.php");
+require("includes/header.php");
+// include("includes/header.php");
 
-	if(isset($_GET['u'])) 
-	{
-		$username = $_GET['u'];
-	}
-	else 
-	{
-		$username = $userLoggedIn;
-	}
+
+if(isset($_GET['u'])) 
+	$username = $_GET['u'];
+else 
+	$username = $userLoggedIn;
 ?>
 
 <div class="main_column column" id="main_column">
@@ -33,19 +31,24 @@
 		foreach(explode(",", $mutual_friends_array_string) as $friend) 
 		{
 			$friend_obj = new User($conn, $friend);
-			echo "<a href='$friend'>
-					<img class='profilePicSmall' src='" . $friend_obj->getProfilePic() ."'>"
-					 . $friend_obj->getFirstAndLastName() . 
+			$profilePic = $friend_obj->getProfilePic();
+			$fullname = $friend_obj->getFirstAndLastName();
+			
+			$mutualFriendsHtml .= "<a href='$friend'>
+					<img class='profilePicSmall' src='" . $profilePic ."'>"
+					 . $fullname . 
 				"</a>
 				<br>";
 		}
 	}
 	else
 	{
-		echo "<p>You are probably viewing this page by mistake.</p>
+		$mutualFriendsHtml = "<p>You are probably viewing this page by mistake.</p>
 				<a href=''>Home</a>
 				<br>";
 	}
+
+	echo $mutualFriendsHtml;
 	?>
 
 </div>

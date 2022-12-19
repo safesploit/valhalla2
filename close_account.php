@@ -1,17 +1,21 @@
 <?php
-	include("includes/header.php");
+require("includes/header.php");
+// include("includes/header.php");
 
-	if(isset($_POST['cancel'])) 
-	{
-		header("Location: settings.php");
-	}
+if(isset($_POST['cancel'])) 
+	header("Location: settings.php");
 
-	if(isset($_POST['close_account'])) 
+if(isset($_POST['close_account'])) 
+{
+	$closeAccount = $user_obj->closeAccount();
+	if($closeAccount)
 	{
-		$close_query = mysqli_query($con, "UPDATE users SET user_closed='yes' WHERE username='$userLoggedIn'");
 		session_destroy();
 		header("Location: register.php");
 	}
+	else
+		echo 'Error closing account!';
+}
 ?>
 
 <div class="main_column column">

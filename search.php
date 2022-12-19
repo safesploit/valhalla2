@@ -1,23 +1,20 @@
 <?php
-	include("includes/header.php");
+require("includes/header.php");
+// include("includes/header.php");
 
-	if(isset($_GET['q'])) 
-	{
-		$query = $_GET['q'];
-	}
-	else 
-	{
-		$query = "";
-	}
 
-	if(isset($_GET['type'])) 
-	{
-		$type = $_GET['type'];
-	}
-	else 
-	{
-		$type = "name";
-	}
+if(isset($_GET['q'])) 
+	$query = $_GET['q'];
+else 
+	$query = "";
+
+if(isset($_GET['type'])) 
+	$type = $_GET['type'];
+else 
+	$type = "name";
+
+$search_user_obj = new User($conn, $username);
+
 ?>
 
 <div class="main_column column" id="main_column">
@@ -29,18 +26,13 @@
 		{
 			//Assumes user is searching for usernames
 			if($type == "username") 
-				$usersReturnedQuery = mysqli_query($conn, "SELECT first_name, last_name, username, profile_pic, user_closed, friend_array FROM users WHERE username LIKE '$query%' AND user_closed='no'");
-			else 
+			{
+				$usersReturnedQuery = $search_user_obj->usernameTypeSearch($query);
+			}
+			else if ($type == "name" || $type == "")
 			{
 				$names = explode(" ", $query);
-
-				if(count($names) == 3)
-					$usersReturnedQuery = mysqli_query($conn, "SELECT first_name, last_name, username, profile_pic, user_closed, friend_array FROM users WHERE (first_name LIKE '$names[0]%' AND last_name LIKE '$names[2]%') AND user_closed='no'");
-				//If query has one word only, search first names or last names 
-				else if(count($names) == 2)
-					$usersReturnedQuery = mysqli_query($conn, "SELECT first_name, last_name, username, profile_pic, user_closed, friend_array FROM users WHERE (first_name LIKE '$names[0]%' AND last_name LIKE '$names[1]%') AND user_closed='no'");
-				else if(count($names) == 1)
-					$usersReturnedQuery = mysqli_query($conn, "SELECT first_name, last_name, username, profile_pic, user_closed, friend_array FROM users WHERE (first_name LIKE '$names[0]%' OR last_name LIKE '$names[0]%') AND user_closed='no'");
+				$usersReturnedQuery = $search_user_obj->nameTypeSearch($names);
 			}
 
 			//Check if results were found 
@@ -55,58 +47,36 @@
 
 			while($row = mysqli_fetch_array($usersReturnedQuery)) 
 			{
-				$user_obj = new User($conn, $user['username']);
+				$search_user_obj = new User($conn, $user['username']);
 
 				$button = "";
-				$mutual_friends = "";
+				$mutualFriends = "";
 
-				if($user['username'] != $row['username']) 
+				$firstname = $row['first_name'];
+				$lastname = $row['last_name'];
+				$profilePic = $row['profile_pic'];
+				$searchedUsername = $row['username'];
+
+				if($user['username'] != $searchedUsername) 
 				{
-
-					//Buttons depending on friendship status 
-					if($user_obj->isFriend($row['username']))
-						$button = "<input type='submit' name='" . $row['username'] . "' class='danger' value='Remove Friend'>";
-					else if($user_obj->didReceiveRequest($row['username']))
-						$button = "<input type='submit' name='" . $row['username'] . "' class='warning' value='Respond to request'>";
-					else if($user_obj->didSendRequest($row['username']))
-					{
-						$button = "<input type='submit' class='default' value='Request Sent'><br><br><br><input type='submit' name='" . $row['username'] . "' class='warning' value='Cancel Request'>";
-					}
-					else if($user_obj->isFriend($row['username']) == false)
-						$button = "<input type='submit' name='" . $row['username'] . "' class='success' value='Add Friend'>";
-
-					$mutual_friends = $user_obj->getMutualFriendsNum($row['username']) . " friends in common";
-
+					$button = $search_user_obj->getFriendshipStatusButton($searchedUsername);
+					$mutualFriendsNum = $search_user_obj->getMutualFriendsNum($searchedUsername);
+					$mutualFriendsStr = $mutualFriendsNum . " friends in common";
 
 					//Button forms
-					if(isset($_POST[$row['username']])) 
+					if(isset($_POST[$searchedUsername])) 
 					{
-						if($user_obj->isFriend($row['username'])) 
-						{
-							$user_obj->removeFriend($row['username']);
-							header("Location: https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]");
-						}
-						else if($user_obj->didReceiveRequest($row['username'])) 
-						{
-							header("Location: requests.php");
-						}
-						else if($user_obj->didSendRequest($row['username'])) 
-						{
-							//Option to cancel friend request
-							$user_obj->cancelFriendRequest($row['username']);
-							header("Location: https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]");
-						}
-						else if($user_obj->isFriend($row['username']) == false)
-						{
-							$user_obj->sendRequest($row['username']);
-							header("Location: https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]");
-						}
+						$search_user_obj->friendButtonForms($searchedUsername);
 					}
 				}
 
-				//Prevents userLoggedIn from showing in search results
-				if($userLoggedIn != $row['username']) 
-				{
+				if($userLoggedIn == $searchedUsername)
+					$userLoggedInTag = '<span id="userLoggedInTag">You</span>';
+				else
+					$userLoggedInTag = "";
+
+				// if($userLoggedIn != $searchedUsername) 
+				// {
 					echo "	<div class='search_result'>
 								<div class='searchPageFriendButtons'>
 									<form action='' method='POST'>
@@ -116,19 +86,20 @@
 								</div>
 
 								<div class='result_profile_pic'>
-									<a href='" . $row['username'] ."'><img src='". $row['profile_pic'] ."' style='height: 100px;'></a>
+									<a href='" . $searchedUsername ."'><img src='". $profilePic ."' style='height: 100px;'></a>
 								</div>
 
-									<a href='" . $row['username'] ."'> " . $row['first_name'] . " " . $row['last_name'] . "
-									<p id='grey'> " . $row['username'] ."</p>
+									<a href='" . $searchedUsername ."'> " . $firstname . " " . $lastname . "
+									<p id='grey'> " . $searchedUsername ."</p>
 									</a>
+									$userLoggedInTag
 									<br>
-									" . $mutual_friends ."<br>
+									" . $mutualFriendsStr ."<br>
 
 							</div>
 							<hr id='search_hr'>
 						";
-				}
+				// }
 			} //End while()
 		}
 

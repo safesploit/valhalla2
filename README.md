@@ -1,5 +1,5 @@
 # Valhalla2
-Valhalla 2.0 is a full scale social media website! Not only does it contain all the main functionality you get with the likes of Facebook or Twitter, but it also respects privacy!
+Valhalla 2 is a full scale social media website! Not only does it contain all the main functionality you get with the likes of Facebook or Twitter, but it also respects privacy!
 
 # Features
   - Email and password login
@@ -17,10 +17,20 @@ Valhalla 2.0 is a full scale social media website! Not only does it contain all 
 
 # Table of Contents
 
-- [Configuration and Setup](#configuration-and-setup)
-  - [Importing SQL Database Structure](#importing-sql-database-structure)
-- [Security Features](#security-features)
-- [Preview](#preview)
+- [Valhalla2](#valhalla2)
+- [Features](#features)
+- [Table of Contents](#table-of-contents)
+- [Setup and Usage](#setup-and-usage)
+  - [Compatability](#compatability)
+  - [Dependencies](#dependencies)
+  - [SQL Database Structure](#sql-database-structure)
+  - [LAMP Setup (Production)](#lamp-setup-production)
+  - [Connecting PHP to MySQL Server](#connecting-php-to-mysql-server)
+  - [Webserver Rewrite](#webserver-rewrite)
+- [Programming Logic](#programming-logic)
+  - [Invite System](#invite-system)
+  - [Security Features](#security-features)
+- [Preview Images](#preview-images)
   - [Registration page](#registration-page)
   - [Settings page for Administrator showing to generate invite code](#settings-page-for-administrator-showing-to-generate-invite-code)
   - [Settings page for a 'regular' user](#settings-page-for-a-regular-user)
@@ -36,15 +46,145 @@ Valhalla 2.0 is a full scale social media website! Not only does it contain all 
   - [Embedded YouTube Videos](#embedded-youtube-videos)
   - [Live search from anypage showing mutual friends](#live-search-from-anypage-showing-mutual-friends)
 
-# Configuration and Setup
+# Setup and Usage
 
-## Importing SQL Database Structure
+## Compatability
 
-valhalla2-sql-table-No-Data.sql
+Developed in PHP 7.4.
 
-# Security Features
+PHP 8.1 seems to be incompatible as of Valhalla 2.1.1.
 
-**Each user has a unique salt**
+## Dependencies
+PHP extensions required:
+
+- GD (for image cropping)
+- MySQL
+
+## SQL Database Structure
+
+The database empty tables can be created via `valhalla2-sql-table-No-Data.sql`.
+
+## LAMP Setup (Production)
+
+### Apache Setup
+
+`/etc/apache2/apache.conf` needs to be edited to include the following:
+
+
+
+### PHP Setup
+
+`/etc/php/7.4/apache2/php.ini` needs to be edited to include the following:
+
+    ;;;;;;;;;;;;;;;;
+    ; File Uploads ;
+    ;;;;;;;;;;;;;;;;
+    file_uploads = On
+    upload_max_filesize = 30M
+
+    post_max_size = 8M
+
+
+### MySQL Server Setup
+
+
+
+### SQL User Creation
+
+Amend the password _PASSWORD_HERE_ using a strong [random password](https://passwordsgenerator.net/).
+
+If you are using a database server not hosted locally, change 'localhost' to your IP address.
+
+    mysql> CREATE USER IF NOT EXISTS 'valhalla'@'localhost' IDENTIFIED BY 'PASSWORD_HERE';
+
+### SQL User Permissions
+
+The SQL user 'valhalla' must have SELECT, INSERT, UPDATE and DELETE privileges:
+
+    mysql> GRANT SELECT, INSERT, UPDATE, DELETE ON `valhalla2`.* TO 'valhalla'@'localhost';
+
+  - INSERT is used primarily for messages, notifications and post.
+  - SELECT is required for the website to return queries.
+  - UPDATE is required to amend posts which are marked as `deleted`.
+  - DELETE is required for deleting private messages.
+
+## Connecting PHP to MySQL Server
+
+In the file `config/config.php` the following must be entered correctly for your database configuration:
+
+    $dbname = "valhalla2";
+    $dbhost = "localhost";
+    $dbuser = "valhalla";
+    $dbpass = "PASSWORD_HERE";
+
+In the file `valhalla2-sql-table-No-Data.sql` the database will be created as `valhalla2`.
+
+## Webserver Rewrite
+
+User profiles are rewritten from `/profile.php?safesploit` to `/safesploit`.
+
+This rewrite relies on Apache having the `mod-rewrite` module being enabled and the `.htaccess` file being present with the configuration below.
+
+    RewriteEngine On
+    RewriteRule ^([a-zA-Z0-9_-]+)$ profile.php?profile_username=$1
+    RewriteRule ^([a-zA-Z0-9_-]+)/$ profile.php?profile_username=$1
+
+    RewriteEngine On
+    Options +FollowSymLinks
+    RewriteCond %{THE_REQUEST} ^.*/index.php
+    RewriteRule ^(.*)index.php$ /$1 [R=301,L]
+
+The `valhalla2-setup-env.sh` script will generate the `.htaccess` file.
+
+### Apache Rewrite
+
+    sudo a2enmod rewrite
+
+Apache's instance will need to be reloaded afterwards
+
+    sudo service apache2 reload
+
+### Creating Rewrite Rules
+This step is not necessary if using `valhalla2-setup-env.sh`
+
+--
+
+Inside the web directory `/var/www/Valhalla2/` create `.htaccess` with the configuration above.
+
+- Not included because GitHub forbids .htaccess uploads.
+- Maybe upload as htaccess.zip and extract.
+- I have the intention of doing the same for `search.php`
+
+### Running valhalla2-setup-env.sh
+
+Never blindly run a Bash script with root privileges from the Internet!
+
+    cd ~/Downloads/Valhalla2/
+    sudo sh setup-env.sh
+
+
+
+# Programming Logic
+
+## Invite System
+
+Within the `includes/form_handlers/settings_handler.php` there is code for invite code generation. This table in the database is checked when a user registers.
+
+I have since disabled this requirement as of `v2.1.X`, but the feature can be enable again, by uncommented in `includes/form_handlers/register_handler.php`.
+
+	if(empty($error_array))
+	{
+		if($user_obj->inviteCodeCheck($invite_code) == False)
+			array_push($error_array, "Your invite code is invalid or has been used <br>");
+	}
+
+Likewise, the HTML form must be uncommented in `register.php`.
+
+    <input type="text" name="reg_invite_code" placeholder="Invite Code (optional)" value="" autocomplete="off"> 
+
+## Security Features
+
+### Each user has a unique salt
 
 While database compromises via SQL injection would prefer to be avoid completely. Realisitically this attack vector needs to be consider. 
 In response I create another table in the database called 'salts' this table contains two fields 'username' and 'salt'.
@@ -55,27 +195,36 @@ The salt table is accessed during registration, login and _when a user is logged
 
 
 
-**PBKDF2**
+### PBKDF2 Implementation
 
-PBKDF2 has been deployed on this site.
+As the key derivative function I chose PBKDF2. 
+Inside the `Salt.php` file
+`$hash = hash_pbkdf2("sha256", $password, $salt, $iterations, $length);`
+
+- $iterations = 100000;
+- $length = 32;
+
+Meanwhile `$password` and `$salt` are variable.
+
+#### Salt
+
+Inspecting `includes/classes/Salt.php` the following functions can be seen:
+
+- hashPassword()
+- generateSalt()
+- getSalt()
+- submitSalt()
+
+
+### Login with email address**
+
+Email login is security through obsecurity, but has been proven to aid security against bruteforce attacks. 
+Habbo Hotel ([for financial crime](https://youtu.be/HiDPTiFHfcs?t=1157)) saw many victims of brute forcing using username/password for authentication as opposed to email/password.
 
 
 
-**Invite only**
 
-A validinvite code must be used during registration. 
-Ensuring users not authorised are not able use the website, users not logged-in are redirected to the login page.
-
-
-**Login with email address**
-
-This is security through obsecurity, but has been proven to aid security against bruteforce attacks. 
-Which Haboo saw many victims of due to it using username/password for authentication as opposed to email/password.
-
-
-
-
-# Preview
+# Preview Images
 ## Registration page
 <img width="792" alt="001_register" src="https://user-images.githubusercontent.com/10171446/153286193-dd8308bb-604d-4fdd-a8bf-49f8f87d2840.PNG">
 

@@ -1,36 +1,31 @@
 <?php
-include("includes/header.php");
+require("includes/header.php");
+// include("includes/header.php");
 
-	$message_obj = new Message($conn, $userLoggedIn);
+$message_obj = new Message($conn, $userLoggedIn);
 
-	if(isset($_GET['u']))
+if(isset($_GET['u']))
+	$user_to = $_GET['u'];
+else
+{
+	$user_to = $message_obj->getMostRecentUser();
+
+	if($user_to == false)
+		$user_to = 'new';
+}
+
+if($user_to != "new")
+	$user_to_obj = new User($conn, $user_to);
+
+if(isset($_POST['post_message']))
+{
+	if(isset($_POST['message_body']))
 	{
-		$user_to = $_GET['u'];
+		$body = mysqli_real_escape_string($conn, $_POST['message_body']);
+		$date = date("Y-m-d H:i:s");
+		$message_obj->sendMessage($user_to, $body, $date);
 	}
-	else
-	{
-		$user_to = $message_obj->getMostRecentUser();
-
-		if($user_to == false)
-		{
-			$user_to = 'new';
-		}
-	}
-
-	if($user_to != "new")
-	{
-		$user_to_obj = new User($conn, $user_to);
-	}
-
-	if(isset($_POST['post_message']))
-	{
-		if(isset($_POST['message_body']))
-		{
-			$body = mysqli_real_escape_string($conn, $_POST['message_body']);
-			$date = date("Y-m-d H:i:s");
-			$message_obj->sendMessage($user_to, $body, $date);
-		}
-	}
+}
 ?>
 
 

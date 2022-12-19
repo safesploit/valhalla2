@@ -1,122 +1,97 @@
 <?php
 session_start();
 
-//Initialises the form variables
-$fname = "";
-$lname = "";
-$em = "";
-$em2 = "";
-$password = "";
-$password2 = "";
-$date = "";
-$profile_pic = "";
-$error_array = array(); //Holds error messages (e.g. if email is already in use)
-$invite_code = "";
-
 if(isset($_POST['register_button']))
 {
-	//include form variables
-	include("includes/form_handlers/includes/sanitise_register_form_variables.php");
-	//Can be rewritten into a function
+	//Initialise form variables
+	$fname = $lname = $em = $em2 = $password = $password2 = $date = $profile_pic = $invite_code = "";
+	$error_array = array();
 
-	//Check if emails match
-	if ($em == $em2)
-	{
-		//Checks if $em==$em2
-		if(filter_var($em, FILTER_VALIDATE_EMAIL))
-		{
-			//Check if email already exists
-			$query = "SELECT email FROM users WHERE email='$em'";
-			$e_check = mysqli_query($conn, $query);
+	//Register form values AND sanitise be database
+	//First name
+	$fname = strip_tags($_POST['reg_fname']); //Remove HTML tags
+	$fname = str_replace(' ', '', $fname); //replaces spaces with empty char ' ' --> ''
+	$fname = ucfirst(strtolower($fname)); //Changes all chars to lowercase, except first
+	$_SESSION['reg_fname'] = $fname; //Stores first name into session variable
+	//Last name
+	$lname = strip_tags($_POST['reg_lname']); //Remove HTML tags
+	$lname = str_replace(' ', '', $lname); //replaces spaces with empty char ' ' --> ''
+	$lname = ucfirst(strtolower($lname)); //Changes all chars to lowercase, except first
+	$_SESSION['reg_lname'] = $lname; //Stores last name into session variable
+	//email
+	$em = strip_tags($_POST['reg_em']); //Remove HTML tags
+	$em2 = strip_tags($_POST['reg_em2']); //Remove HTML tags
+	$_SESSION['reg_em'] = $em; //Stores em into session variable
+	$_SESSION['reg_em2'] = $em2; //Stores em2 into session variable
+	//password
+	$password = strip_tags($_POST['reg_password']); //Remove HTML tags
+	$password2 = strip_tags($_POST['reg_password2']); //Remove HTML tags
+	$_SESSION['reg_password'] = $password; //Stores password into session variable
+	$_SESSION['reg_password2'] = $password2; //Stores password2 into session variable
+	//date
+	$date = date("Y-m-d"); //Current date
+	//invite_code
+	$invite_code = strip_tags($_POST['reg_invite_code']); //Remove HTML tags
+	$_SESSION['reg_invite_code'] = $invite_code; //Stores invite_code into session variable
 
-			//Count number of rows returned
-			$num_rows = mysqli_num_rows($e_check);
+	//Function variables
+	$emailMatchReturn = $user_obj->checkEmailsMatch($em, $em2);
+	$emailFormatReturn = $user_obj->checkEmailFormat($em);
+	$emailExistsReturn = $user_obj->checkEmailExists($em);
+	$passwordMatchReturn = $user_obj->checkPasswordsMatch($password, $password2);
+	$passwordContainsReturn = $user_obj->checkPasswordContains($password, $password2);
+	$checkPasswordLengthReturn = $user_obj->checkPasswordLength($password);
+	$checkFirstnameLengthReturn = $user_obj->checkFirstnameLength($fname);
+	$checkLastnameLengthReturn = $user_obj->checkLastnameLength($lname);
 
-			if($num_rows > 0)
-			{
-				array_push($error_array, "Email is already registered <br>");
-			}
-		}
-		else
-		{
-			array_push($error_array, "Invalid email format<br>");
-		}
-	}
-	else
-	{
-		array_push($error_array, "Emails do not match <br>");
-	}
+	//Error array strings
+	$errEmailsNotEqual = $error_obj->errEmailsNotEqual();;
+	$errEamilInvalidFormat =  $error_obj->errEamilInvalidFormat();
+	$errEmailAlreadyReg =  $error_obj->errEmailAlreadyReg();
+	$errPasswordsNotEqual =  $error_obj->errPasswordsNotEqual();
+	$errPasswordCanOnlyContain = $error_obj->errPasswordCanOnlyContain();
+	$errPasswordLength = $error_obj->errPasswordLength();
+	$errFirstnameLength = $error_obj->errFirstnameLength();
+	$errLastnameLength = $error_obj->errLastnameLength();
+	$errInviteCodeInvalid = $error_obj->errInviteCodeInvalid();
+	$successProfileCreated = $error_obj->successProfileCreated();
 
-	//Check if passwords match
-	if ($password != $password2)
-	{
-		array_push($error_array, "Passwords do not match <br>");
-	}
-	else
-	{
-		if(preg_match('/[^A-Za-z0-9]/', $password))
-		{
-			array_push($error_array, "Your password can only contain a-z, A-Z, 0-9 as characters <br>");
-		}
-	}
+	//Error array pushes
+	if($emailMatchReturn == False)
+		array_push($error_array, $errEmailsNotEqual);
+	if($emailFormatReturn == False)
+		array_push($error_array, $errEamilInvalidFormat);
+	if($emailExistsReturn == True)
+		array_push($error_array, $errEmailAlreadyReg);
+	if ($passwordMatchReturn == False)
+		array_push($error_array, $errPasswordsNotEqual);
+	if($passwordContainsReturn == True)
+		array_push($error_array, $errPasswordCanOnlyContain);
+	if($checkPasswordLengthReturn == True)
+		array_push($error_array, $errPasswordLength);
+	if($checkFirstnameLengthReturn == True)
+		array_push($error_array, $errFirstnameLength);
+	if($checkLastnameLengthReturn == True)
+		array_push($error_array, $errLastnameLength);	
+	// if($user_obj->inviteCodeCheck($invite_code) == False)
+	// 	array_push($error_array, $errInviteCodeInvalid);
 
-	//Check password length
-	//include('includes/classes/User.php'); //place this in /register.php
-	//Then $user_obj = new User($conn, )
-	//if($user_obj->checkPasswordLen($password) == true) //
-	if(strlen($password > 64 || strlen($password) < 8))
-	{
-		array_push($error_array, "Your password must be between between 8 and 64 characters <br>");
-	}
+	$username = $user_obj->generateUsername($fname, $lname);
+	$profile_pic = $user_obj->profilePic();
 
-	if(strlen($fname) > 50 || strlen($fname) < 2)
-	{
-		array_push($error_array, "Your first name must be between 2 and 50 characters <br>");
-	}
-
-	if(strlen($lname) > 50 || strlen($lname) < 2)
-	{
-		array_push($error_array, "Your last name must be between 2 and 50 characters <br>");
-	}
-
-	//Check invite code is valid
-	$invite_query = mysqli_query($conn, "SELECT * FROM invites WHERE invite_code='$invite_code' AND used='no'");
-	if(mysqli_num_rows($invite_query))
-	{
-		$invite_query = mysqli_query($conn, "UPDATE invites SET used='yes' WHERE invites.invite_code='$invite_code'");
-	}
-	else
-	{
-		array_push($error_array, "Your invite code is invalid or has been used <br>");
-	}
-
-	//Creates a unique username
-	include("includes/form_handlers/includes/generate_username.php");
-
-	//Generates salt
-	//Submit salt into Salts table
-	//Hash password
+	//Create salt and hash password
 	if(empty($error_array))
 	{
-		//include("includes/form_handlers/hash_password_pbkdf2.php");
 		$salt = $salt_obj->generateSalt();
 		$salt_obj->submitSalt($salt, $username);
 		$password = $salt_obj->hashPassword("", $password, $salt);
 	}
 
-	//Profile picture assignment
-	include("includes/form_handlers/includes/profile_pic.php");
-
-	//if $error_array is empty then submit query
 	if(empty($error_array))
 	{
-	$sql = "INSERT INTO `users` (`id`, `first_name`, `last_name`, `username`, `email`, `password`, `signup_date`, `profile_pic`, `num_posts`, `num_likes`, `user_closed`, `friend_array`) VALUES (NULL, '$fname', '$lname', '$username', '$em', '$password', '$date', '$profile_pic', '0', '0', 'no', ',')";
-	$query = mysqli_query($conn, $sql);
-
-	array_push($error_array, "<span>Profile successfully created. <br> You can now login!<br></span>");
-
-	//Clear session variables
-	include("includes/form_handlers/includes/clear_session_variables.php");
+		$user_obj->submitRegisterQuery($fname, $lname, $username, $em, $password, $date, $profile_pic);
+		array_push($error_array, $successProfileCreated);
+		session_destroy(); //Clear session variables
 	}
 }
 ?>

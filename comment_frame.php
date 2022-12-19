@@ -1,19 +1,21 @@
 <?php 
-	require_once('config/config.php'); 
-	include("includes/classes/User.php");
-	include("includes/classes/Post.php");
-	include("includes/classes/Notification.php");
+require_once('config/config.php'); 
+require("includes/classes/Comment.php");
+require("includes/classes/User.php");
+require("includes/classes/Post.php");
+require("includes/classes/Notification.php");
 
-	if(isset($_SESSION['username']))
-	{
-		$userLoggedIn = $_SESSION['username'];
-		$user_details_query = mysqli_query($conn, "SELECT * FROM users WHERE username='$userLoggedIn'");
-		$user = mysqli_fetch_array($user_details_query);
-	}
-	else
-	{
-		header("Location: register.php");
-	}
+if(!isset($_SESSION['username']))
+	header("Location: register.php");
+
+$userLoggedIn = $_SESSION['username'];
+
+$comment_obj = new Comment($conn, $userLoggedIn);
+$post_obj = new Post($conn, $userLoggedIn);
+$user_obj = new User($conn, $userLoggedIn);
+
+$user = $user_obj->fetchUserDetails();
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -24,7 +26,6 @@
 	<link rel="stylesheet" type="text/css" href="assets/css/comment_frame_style.css">
 </head>
 <body>
-
 	<script>
 		function toggle() 
 		{
@@ -38,130 +39,114 @@
 	</script>
 
 	<?php
-		//Get id of post
-		if(isset($_GET['post_id']))
+	// $post_obj->getComments();
+
+	//consider using an error array to manage strings
+
+	//Get id of post
+	if(isset($_GET['post_id']))
+		$postId = $_GET['post_id'];
+
+	// $user_query = mysqli_query($conn, "SELECT added_by, user_to FROM posts WHERE id='$postId'");
+	// $row = mysqli_fetch_array($user_query);
+
+	// $postedTo = $row['added_by'];
+	$postedTo = $comment_obj->getPostId($postId);
+
+	if(isset($_POST['postComment' . $postId]))
+	{
+		$postBody = $_POST['post_body'];
+		$userTo = $row['user_to'];
+
+		$postBody = $comment_obj->preparePostBody($postBody);
+		$checkEmpty = $comment_obj->checkIfEmptyPost($postBody);
+
+		if($checkEmpty == true)
 		{
-			$post_id = $_GET['post_id'];
-		}
+			// $date_time_now = date("Y-m-d H:i:s");
+			// $sql = "INSERT INTO `comments` (`id`, `post_body`, `posted_by`, `posted_to`, `date_added`, `removed`, `post_id`) VALUES (NULL, '$postBody', '$userLoggedIn', '$postedTo', '$date_time_now', 'no', '$postId')";
+			// $insert_post = mysqli_query($conn, $sql);
+			$insert_post = $comment_obj->submitComment($postBody, $userLoggedIn, $postedTo, $postId);
 
-		$user_query = mysqli_query($conn, "SELECT added_by, user_to FROM posts WHERE id='$post_id'");
-		$row = mysqli_fetch_array($user_query);
+				//Insert notification
+				if($postedTo != $userLoggedIn) 
+				{
+					$notification = new Notification($conn, $userLoggedIn);
+					$notification->insertNotification($postId, $postedTo, "comment");
+				}
 
-		$posted_to = $row['added_by'];
+				if($userTo != 'none' && $userTo != $userLoggedIn) 
+				{
+					$notification = new Notification($conn, $userLoggedIn);
+					$notification->insertNotification($postId, $userTo, "profile_comment");
+				}
 
-		if(isset($_POST['postComment' . $post_id]))
-		{
-			$post_body = $_POST['post_body'];
-			$user_to = $row['user_to'];
+				// $getCommenters = mysqli_query($conn, "SELECT * FROM comments WHERE post_id='$postId'");
+				$getCommenters = $comment_obj->getCommenters($postId);
+				$notifiedUsers = array(); //Create an array
+				while($row = mysqli_fetch_array($getCommenters))
+				{
+					/**
+					 * PREVENTS DUPLICATE NOTIFICATIONS FOR THE SAME POST
+					 * 
+					 * (DO NOT GIVE NOTIFICATION):
+					 * 
+					 * If posted_by != posted_to (not original poster)  &&
+					 * If posted_by != user_to &&
+					 * If posted_by != userLoggedIn && (So we don't give ourselves a notification)
+					 * If !in_array() (to prevent multiple notifications)
+					 * 
+					 **/
+					$postedBy = $row['posted_by'];
 
-			//Start line break code
-			$post_body = strip_tags($post_body); //removes HTML tags
-			$post_body = str_replace('\r\n', '\n', $post_body);
-			$post_body = nl2br($post_body);
-			//END line break code
-			$post_body = mysqli_escape_string($conn, $post_body);
-
-			$check_empty = preg_replace('/\s+/', '', $post_body); //removes all spaces
-
-			//Checks if post is empty
-			if($check_empty != "")
-			{
-				$date_time_now = date("Y-m-d H:i:s");
-				$sql = "INSERT INTO `comments` (`id`, `post_body`, `posted_by`, `posted_to`, `date_added`, `removed`, `post_id`) VALUES (NULL, '$post_body', '$userLoggedIn', '$posted_to', '$date_time_now', 'no', '$post_id')";
-				$insert_post = mysqli_query($conn, $sql);
-
-					//Insert notification
-					if($posted_to != $userLoggedIn) 
+					if($postedBy != $postedTo && $postedBy != $userTo && $postedBy != $userLoggedIn && !in_array($postedBy, $notifiedUsers))
 					{
 						$notification = new Notification($conn, $userLoggedIn);
-						$notification->insertNotification($post_id, $posted_to, "comment");
+						$notification->insertNotification($postId, $postedBy, "comment_non_owner");
+
+						array_push($notifiedUsers, $postedBy);
 					}
+				}
 
-					if($user_to != 'none' && $user_to != $userLoggedIn) 
-					{
-						$notification = new Notification($conn, $userLoggedIn);
-						$notification->insertNotification($post_id, $user_to, "profile_comment");
-					}
-
-					$get_commenters = mysqli_query($conn, "SELECT * FROM comments WHERE post_id='$post_id'");
-					$notified_users = array();
-					while($row = mysqli_fetch_array($get_commenters))
-					{
-						/**
-						 * PREVENTS DUPLICATE NOTIFICATIONS FOR THE SAME POST
-						 * 
-						 * (DO NOT GIVE NOTIFICATION):
-						 * 
-						 * If posted_by != posted_to (not original poster)  &&
-						 * If posted_by != user_to &&
-						 * If posted_by != userLoggedIn && (So we don't give ourselves a notification)
-						 * If !in_array() (to prevent multiple notifications)
-						 * 
-						 **/
-
-						if($row['posted_by'] != $posted_to && $row['posted_by'] != $user_to && $row['posted_by'] != $userLoggedIn && !in_array($row['posted_by'], $notified_users))
-						{
-							$notification = new Notification($conn, $userLoggedIn);
-							$notification->insertNotification($post_id, $row['posted_by'], "comment_non_owner");
-
-							array_push($notified_users, $row['posted_by']);
-						}
-					}
-
-				echo "<p>Commented Posted! </p>";
-			}
-			else
-			{
-				echo "<b><p>Cannot submit an empty comment!</p></b>";
-			}
-		}
-
-	?>
-
-	<!-- Post comment $post_id -->
-	<form action="comment_frame.php?post_id=<?php echo $post_id; ?>" id="comment_form" name="postComment<?php echo $post_id; ?>" method="POST">
-		<textarea name="post_body" placeholder="Add a comment"></textarea>
-		<input type="submit" name="postComment<?php echo $post_id; ?>" value="Post">
-	</form>
-
-
-	<!-- Load comments -->
-	<?php
-		$get_comments = mysqli_query($conn, "SELECT * FROM comments WHERE post_id='$post_id' ORDER BY id ASC");
-		$count = mysqli_num_rows($get_comments);
-
-		if($count != 0)
-		{
-			while($comment = mysqli_fetch_array($get_comments))
-			{
-				$comment_body = $comment['post_body'];
-				$posted_to = $comment['posted_to'];
-				$posted_by = $comment['posted_by'];
-				$date_added = $comment['date_added'];
-				$removed = $comment['removed'];
-
-				include("includes/classes/comment_frame_timeframe.php");
-
-				$user_obj = new User($conn, $posted_by);
-
-				//PHP tag closed and opened again below
-				//This is done to prevent having to convert the <div> below into PHP appopriate code.
-				?>
-
-				<div class="comment_section">
-					<a href="<?php echo $posted_by; ?>" target="_parent"><img src="<?php echo $user_obj->getProfilePic(); ?>" title="<?php echo $posted_by ?>" style="float:left;" height="30"></a>
-					<a href="<?php echo $posted_by; ?>" target="_parent"><b><?php echo $user_obj->getFirstAndLastName(); ?></b></a>
-					&nbsp;&nbsp;&nbsp;&nbsp; <?php echo $time_message . "<br>" . $comment_body; ?>
-					<hr>
-				</div>
-
-				<?php
-			}
+			$commentStatus = "<p>Commented Posted!</p>";
 		}
 		else
 		{
-			echo "<center><br><br>No Comments to Show!</center>";
+			$commentStatus = "<b><p>Cannot submit an empty comment!</p></b>";
 		}
+
+		echo $commentStatus;
+	}
+
+	?>
+
+	<!-- Post comment $postId -->
+	<!-- <form action="comment_frame.php?post_id=<?php echo $postId; ?>" id="comment_form" name="postComment<?php echo $postId; ?>" method="POST">
+		<textarea name="post_body" placeholder="Add a comment"></textarea>
+		<input type="submit" name="postComment<?php echo $postId; ?>" value="Post">
+	</form>
+	-->
+	<?php 
+	$postComment = "
+					<form action='comment_frame.php?post_id=$postId' id='comment_form' name='postComment$postId' method='POST'>
+						<textarea name='post_body' placeholder='Add a comment'></textarea>
+						<input type='submit' name='postComment$postId' value='Post'>
+					</form>
+					";
+
+	echo $postComment;
+
+	//<!-- Load comments -->
+
+	$getComments = $comment_obj->loadCommentQuery($postId);
+	$count = $comment_obj->numComments($getComments);
+
+	if($count > 0)
+		$commentsFrameHtml = $comment_obj->loadComments($getComments);
+	else
+		$commentsFrameHtml = $comment_obj->noComments();
+	
+	echo $commentsFrameHtml;
 	?>
 
 

@@ -1,5 +1,7 @@
 <?php 
-include("includes/header.php");
+require("includes/header.php");
+// include("includes/header.php");
+
 include("includes/form_handlers/settings_handler.php");
 ?>
 
