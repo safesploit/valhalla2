@@ -16,21 +16,4 @@ if(mysqli_connect_errno())
 {
 	print("Failed to connect: " . mysqli_connect_errno());
 }
-
-// $dbname = "valhalla2";
-// // $dbhost = "192.168.5.102";
-// $dbhost = "127.0.0.1";
-// $dbuser = "valhalla";
-// $dbpass = "PASSWORD_HERE";
-
-// try 
-// {
-// 	$conn = new PDO("mysql:dbname=$dbname;host=$dbhost", "$dbuser", "$dbpass");
-// 	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
-// }
-// catch(PDOExeption $e) 
-// {
-// 	echo "Connection failed: " . $e->getMessage();
-// }
-
 ?>
