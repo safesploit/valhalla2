@@ -103,7 +103,7 @@ class Comment
 	{
 		$check = preg_replace('/\s+/', '', $postBody); //removes all spaces
 		
-		if($check_empty != "")
+		if($check != "")
 			return false;
 		else
 			return true;
