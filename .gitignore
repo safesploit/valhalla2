@@ -12,3 +12,7 @@ includes/form_handlers/.DS_Store
 includes/handlers/.DS_Store
 .htaccess
 assets/images/posts/
+!assets/images/profile_pics/admin
+!assets/images/profile_pics/default
+!assets/images/profile_pics/default_other
+assets/images/profile_pics/
