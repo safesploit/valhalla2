@@ -637,9 +637,9 @@ class User
 		$notifications_obj = new Notification($this->conn, $userLoggedIn);
 
 		$numMessages = $messages_obj->getUnreadNumber();
-		$numNotifications = $notifications_obj->getUnreadNumber();	
-		$numFriendRequests = $this->getNumberOfFriendRequests();	
-		$numSum = $numMessages + $numNotifications + $numFriendRequests; 
+		$numNotifications = $notifications_obj->getUnreadNumber();
+		$numFriendRequests = $this->getNumberOfFriendRequests();
+		$numSum = $numMessages + $numNotifications + $numFriendRequests;
 
 		return $numSum;
 	}
@@ -655,7 +655,7 @@ class User
 			$numSumStr = $numSum;
 
 		if($numSum > 0)
-			$title = '(' . $numSumStr . ')' . ' ';
+			$title = "(" . $numSumStr . ")" . " ";
 
 		$title .= "Valhalla 2";
 
