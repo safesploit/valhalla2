@@ -58,19 +58,25 @@ PHP 8.1 seems to be incompatible as of Valhalla 2.1.1.
 PHP extensions required:
 
 - GD (for image cropping)
-- MySQL
+- MySQL (for database connection)
 
 ## SQL Database Structure
 
-The database empty tables can be created via `valhalla2-sql-table-No-Data.sql`.
+The database empty tables can be from `valhalla2-sql-tables.sql`.
 
 ## LAMP Setup (Production)
+
+The production setup for serversis still udner development.
 
 ### Apache Setup
 
 `/etc/apache2/apache.conf` needs to be edited to include the following:
 
-
+    <Directory /var/www/Valhalla2>
+        Options Indexes FollowSymLinks Includes ExecCGI
+        AllowOverride All
+        Require all granted
+    </Directory>
 
 ### PHP Setup
 
@@ -87,7 +93,10 @@ The database empty tables can be created via `valhalla2-sql-table-No-Data.sql`.
 
 ### MySQL Server Setup
 
-
+    safesploit@sws-vm05:~$ mysql -u root -p
+    Enter password: 
+    ...
+    mysql>
 
 ### SQL User Creation
 
@@ -172,11 +181,8 @@ Within the `includes/form_handlers/settings_handler.php` there is code for invit
 
 I have since disabled this requirement as of `v2.1.X`, but the feature can be enable again, by uncommented in `includes/form_handlers/register_handler.php`.
 
-	if(empty($error_array))
-	{
-		if($user_obj->inviteCodeCheck($invite_code) == False)
-			array_push($error_array, "Your invite code is invalid or has been used <br>");
-	}
+	if($user_obj->inviteCodeCheck($invite_code) == False)
+	  array_push($error_array, $errInviteCodeInvalid);
 
 Likewise, the HTML form must be uncommented in `register.php`.
 
@@ -201,8 +207,8 @@ As the key derivative function I chose PBKDF2.
 Inside the `Salt.php` file
 `$hash = hash_pbkdf2("sha256", $password, $salt, $iterations, $length);`
 
-- $iterations = 100000;
-- $length = 32;
+- $iterations = 100000
+- $length = 32
 
 Meanwhile `$password` and `$salt` are variable.
 
@@ -210,10 +216,10 @@ Meanwhile `$password` and `$salt` are variable.
 
 Inspecting `includes/classes/Salt.php` the following functions can be seen:
 
-- hashPassword()
-- generateSalt()
-- getSalt()
-- submitSalt()
+- `hashPassword()`
+- `generateSalt()`
+- `getSalt()`
+- `submitSalt()`
 
 
 ### Login with email address**
