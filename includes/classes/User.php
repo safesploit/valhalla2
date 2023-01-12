@@ -141,6 +141,25 @@ class User
 		$query = mysqli_query($this->conn, $sql);
 	}
 
+	public function getUsernameUrn($username)
+	{
+		$usernameUrn = "?u=" . $username;
+
+		return $usernameUrn;
+	}
+
+	public function getFriendsHtml($numFriends, $usernameUrn)
+	{
+		if($numFriends == 1)
+			$friendsHtmlStr = "<p><a href='friends.php$usernameUrn'>View friend</a></p>
+			</br>";
+		else
+			$friendsHtmlStr = "<p><a href='friends.php$usernameUrn'>View friends</a></p>
+			</br>";
+		
+		return $friendsHtmlStr;
+	}
+
 	public function getMutualFriendsNum($user_to_check)
 	{
 		$mutualFriends = 0;
@@ -165,6 +184,7 @@ class User
 		}
 		return $mutualFriends;
 	}
+
 
 	public function getMutualFriendsList($user_to_check)
 	{
@@ -198,6 +218,8 @@ class User
 		}
 		return $mutualFriendsString;
 	}
+
+
 
 	public function getNumberOfFriendRequests()
 	{

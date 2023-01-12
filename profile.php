@@ -21,7 +21,7 @@ if(isset($_GET['profile_username']))
 	$profilePic = $userArray['profile_pic'];
 
 	if($userLoggedIn == $username)
-		$postDescription = '<p>This will appear on your profile page and newsfeed for your friends to see!</p>';
+		$postDescription = "<p>This will appear on your profile page and newsfeed for your friends to see!</p>";
 	else
 	{
 		$fullname = $profile_user_obj->getFirstAndLastName(); //Causes error
@@ -84,58 +84,65 @@ if(isset($_POST['post_message']))
 	<img src="<?php echo $profilePic ?>">
 
 	<div class="profile_info">
+		<?php
+		$mutualFriendsNum = $logged_in_user_obj->getMutualFriendsNum($username);
+		$usernameUrn = $logged_in_user_obj->getUsernameUrn($username);
+		?>
 		<p><?php echo "Posts: " . $numPosts; ?></p>
 		<p><?php echo "Likes: " . $numLikes; ?></p>
 		<p><?php echo "Friends: " . $numFriends; ?></p>
-		<p><a href="friends.php<?php if($userLoggedIn != $username) echo "?u=" . $username; ?>">View friends</a></p><br>
-
+		<?php
+			if($numFriends == 1)
+				echo "<p><a href='friends.php$usernameUrn'>View friend</a></p></br>";
+			else
+				echo "<p><a href='friends.php$usernameUrn'>View friends</a></p></br>";
+		?>
 		<?php
 		if($userLoggedIn != $username)
 		{
-			$mutualFriendsNum = $logged_in_user_obj->getMutualFriendsNum($username);
-			$usernameUrn = "?u=" . $username;
-
-		echo "	<p>$mutualFriendsNum Mutual friends</p>
-				<p><a href='mutual_friends.php$usernameUrn'>View mutual friends</a></p><br>
-			";
+			if($mutualFriendsNum == 1)
+				echo "<p>$mutualFriendsNum Mutual friend</p>
+					<p><a href='mutual_friends.php$usernameUrn'>View mutual friend</a></p></br>";
+			else
+				echo "<p>$mutualFriendsNum Mutual friends</p>
+					<p><a href='mutual_friends.php$usernameUrn'>View mutual friends</a></p></br>";
 		}
 		?>
 		
 	</div>
 
 	<form action="<?php echo $username; ?>" method="POST">
-		<?php 
-			// $profile_user_obj = new User($conn, $username); 
+	<?php 
+		// $profile_user_obj = new User($conn, $username); 
+		if($profile_user_obj->isClosed())
+		{
+			header("Location: user_closed.php");
+		}
 
-			if($profile_user_obj->isClosed())
+
+		//Check if user is logged in
+		if($userLoggedIn != $username) 
+		{
+			if($logged_in_user_obj->isFriend($username)) 
 			{
-				header("Location: user_closed.php");
+				echo '<input type="submit" name="remove_friend" class="danger" value="Remove Friend"><br>';
 			}
-
-
-			//Check if user is logged in
-			if($userLoggedIn != $username) 
+			else if ($logged_in_user_obj->didReceiveRequest($username)) 
 			{
-				if($logged_in_user_obj->isFriend($username)) 
-				{
-					echo '<input type="submit" name="remove_friend" class="danger" value="Remove Friend"><br>';
-				}
-				else if ($logged_in_user_obj->didReceiveRequest($username)) 
-				{
-					echo '<input type="submit" name="respond_request" class="warning" value="Respond to Request"><br>';
-				}
-				else if ($logged_in_user_obj->didSendRequest($username)) 
-				{
-					echo '<input type="submit" name="" class="default" value="Request Sent"><br>';
-					echo '<input type="submit" name="cancel_request" class="warning" value="Cancel Request"><br>';
-				}
-				else 
-				{
-					echo '<input type="submit" name="add_friend" class="success" value="Add Friend"><br>';
-				}
+				echo '<input type="submit" name="respond_request" class="warning" value="Respond to Request"><br>';
 			}
+			else if ($logged_in_user_obj->didSendRequest($username)) 
+			{
+				echo '<input type="submit" name="" class="default" value="Request Sent"><br>';
+				echo '<input type="submit" name="cancel_request" class="warning" value="Cancel Request"><br>';
+			}
+			else
+			{
+				echo '<input type="submit" name="add_friend" class="success" value="Add Friend"><br>';
+			}
+		}
 
-		?>
+	?>
 
 		
 		
