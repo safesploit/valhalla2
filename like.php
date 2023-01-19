@@ -8,7 +8,7 @@ if(isset($_SESSION['username']))
 {
 	$userLoggedIn = $_SESSION['username'];
 	$post_obj = new Post($conn, $userLoggedIn);
-	
+
 	$user = $post_obj->fetchUserDetails();
 }
 else
@@ -30,8 +30,6 @@ else
 
 		}
 	</style>
-
-
 	<?php
 		//Get id of post
 		if(isset($_GET['post_id']))
@@ -99,6 +97,5 @@ else
 		echo $buttonHtml;
 
 	?>
-
 </body>
 </html>
