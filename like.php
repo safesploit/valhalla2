@@ -8,8 +8,7 @@ if(isset($_SESSION['username']))
 {
 	$userLoggedIn = $_SESSION['username'];
 	$post_obj = new Post($conn, $userLoggedIn);
-	// $user_details_query = mysqli_query($conn, "SELECT * FROM users WHERE username='$userLoggedIn'");
-	// $user = mysqli_fetch_array($user_details_query);
+	
 	$user = $post_obj->fetchUserDetails();
 }
 else
