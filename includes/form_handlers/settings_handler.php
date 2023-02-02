@@ -69,7 +69,7 @@ if(isset($_POST['update_details']))
 	else
 		$message = "Email addresses do not match<br><br>";
 }
-else 
+else
 {
 	$message = "";
 }
@@ -125,14 +125,14 @@ if(isset($_POST['update_password']))
 		{
 			if($user_obj->checkPasswordLength($newPassword1) == True)
 			{
-				$user_obj->updatePassword($newPassword1);
-				$password_message = "Your password has been changed!<br><br>";
+				// $user_obj->updatePassword($newPassword1);
+				$passwordMessage = "Your password has been changed!<br><br>";
 			}
 			else
-				$password_message = "Your password must be between 8-64 characters!<br><br>";
+				$passwordMessage = "Your password must be between 8-64 characters!<br><br>";
 		}
 		else
-			$password_message = "Your two new passwords need to match!<br><br>";
+			$passwordMessage = "Your two new passwords need to match!<br><br>";
 	}
 	else
 		$passwordMessage = "The old password is incorrect!<br><br>";
@@ -141,29 +141,16 @@ if(isset($_POST['update_password']))
 }
 else 
 {
-	$password_message = "";
+	$passwordMessage = "";
 }
 
-/****************************************************
- * GENERATE invite code if Admin
- * 
- * Displays code below if $userLoggedIn = "safesploit"
- ****************************************************/
 if($userLoggedIn == "safesploit")
 {
 	if(isset($_POST['gen_invite_code']))
 	{
-		//$rand = rand(5, 10) //Generates random number between 5-10
-		$code = md5(date("Y-m-d H:i:s")); //Generate the code
-		$code = str_split($code, 8); //Splits to 8 char
-		$code = strtoupper($code[0]); //STR to Uppercase
-		$gen_invite_code = $code;
-		
-		$query = mysqli_query($conn, "INSERT INTO `invites` (`id`, `invite_code`, `used`) 
-										VALUES (NULL, '$gen_invite_code', 'no')");
+		$genInviteCode = $user_obj->generateInviteCode();
 	}
 }
-
 
 if(isset($_POST['close_account'])) 
 {

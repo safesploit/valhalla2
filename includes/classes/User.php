@@ -347,7 +347,7 @@ class User
 	public function updatePassword($newPassword)
 	{
 		$username = $this->user['username'];
-		$newPasswordHash = $user_obj->hashPassword($newPassword);
+		$newPasswordHash = $this->hashPassword($newPassword);
 		$password_query = mysqli_query($this->conn, "UPDATE users SET password='$newPasswordHash' WHERE username='$username'");
 	}
 
@@ -447,6 +447,34 @@ class User
 		return $userDetails;
 	}
 
+	public function settingsUserArray()
+	{
+		$userLoggedIn = $this->user['username'];
+
+		$userDataQuery = mysqli_query($this->conn, "SELECT first_name, last_name, email FROM users WHERE username='$userLoggedIn'");
+		$row = mysqli_fetch_array($userDataQuery);
+
+		return $row;
+	}
+
+	public function generateInviteCode()
+	{
+		//$rand = rand(5, 10) //Generates random number between 5-10
+		$code = md5(date("Y-m-d H:i:s")); //Generate the code
+		$code = str_split($code, 8); //Splits to 8 char
+		$code = strtoupper($code[0]); //STR to Uppercase
+		$genInviteCode = $code;
+		
+		$this->submitInviteCode($genInviteCode);
+
+		return $genInviteCode;
+	}
+
+	public function submitInviteCode($genInviteCode)
+	{
+		mysqli_query($this->conn, "INSERT INTO `invites` (`id`, `invite_code`, `used`) 
+		VALUES (NULL, '$genInviteCode', 'no')");
+	}
 
 	/*
 	* Search functions
