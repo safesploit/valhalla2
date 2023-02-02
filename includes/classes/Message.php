@@ -271,6 +271,18 @@ class Message
 		return mysqli_num_rows($query);
 	}
 
+	public function sanatiseMessageBody($messageBody)
+	{
+		$body = mysqli_real_escape_string($this->conn, $messageBody);
+		return $body;
+	}
+
+	public function getDate()
+	{
+		$date = date("Y-m-d H:i:s");
+		return $date;
+	}
+	
 
 }
 ?>

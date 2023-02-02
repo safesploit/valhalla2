@@ -688,5 +688,56 @@ class Post
 			return false;
 	}
 
+	public function fetchUserDetails()
+	{
+		$userLoggedIn = $this->user_obj->getUsername();
+		$userDetailsQuery = mysqli_query($this->conn, "SELECT * FROM users WHERE username='$userLoggedIn'");
+		$userArray = mysqli_fetch_array($userDetailsQuery);
+
+		return $userArray;
+	}
+
+	public function getLikesArray($postId)
+	{
+		$getLikes = mysqli_query($this->conn, "SELECT likes, added_by FROM posts WHERE id='$postId'");
+		$row = mysqli_fetch_array($getLikes);
+		return $row;
+	}
+
+	public function likeUserDetails($userLiked)
+	{
+		$userDetailsQuery = mysqli_query($this->conn, "SELECT * FROM users WHERE username='$userLiked'");
+		$row = mysqli_fetch_array($userDetailsQuery);
+		return $row;
+	}
+
+	public function addLike($totalLikes, $totalUserLikes, $userLiked, $postId)
+	{
+		$userLoggedIn = $this->user_obj->getUsername();
+		
+		mysqli_query($this->conn, "UPDATE posts SET likes='$totalLikes' WHERE id='$postId'");
+		mysqli_query($this->conn, "UPDATE users SET num_likes='$totalUserLikes' WHERE username='$userLiked'");
+		mysqli_query($this->conn, "INSERT INTO `likes` (`id`, `username`, `post_id`) 
+									VALUES (NULL, '$userLoggedIn', '$postId')");
+	}
+
+	public function subtractLike($totalLikes, $totalUserLikes, $userLiked, $postId)
+	{		
+		$userLoggedIn = $this->user_obj->getUsername();
+
+		mysqli_query($this->conn, "UPDATE posts SET likes='$totalLikes' WHERE id='$postId'");
+		mysqli_query($this->conn, "UPDATE users SET num_likes='$totalUserLikes' WHERE username='$userLiked'");
+		mysqli_query($this->conn, "DELETE FROM `likes` WHERE username='$userLoggedIn' AND post_id='$postId'");
+	}
+
+	public function checkForUpdatedLikes($postId)
+	{
+		$userLoggedIn = $this->user_obj->getUsername();
+
+		$query = mysqli_query($this->conn, "SELECT * FROM likes WHERE username='$userLoggedIn' AND post_id='$postId'");
+		$numRows = mysqli_num_rows($query);
+		
+		return $numRows;
+	}
 }
 ?>
